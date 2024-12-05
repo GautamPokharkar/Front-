@@ -14,12 +14,14 @@ import UserControl from './components/pages/UserControl';
 import NotifyUser from './components/pages/NotifyUser';
 import ActiveDevices from './components/pages/ActiveDevices';
 import SettingsPage from './components/SettingsPage';
+import AdminDashboard from './components/AdminDashboard'; // Added Admin Dashboard
 import { ThemeProvider } from './context/ThemeContext';
 import { Shield, AlertTriangle, CheckCircle, Download, Lock } from 'lucide-react';
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Track sidebar state
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
+  const [userRole, setUserRole] = useState<string | null>(null); // Track user role
 
   const [auditData] = useState({
     cards: [
@@ -59,8 +61,9 @@ function App() {
     ],
   });
 
-  const handleLogin = () => {
+  const handleLogin = (role: string) => {
     setIsLoggedIn(true);
+    setUserRole(role); // Set the role based on login
   };
 
   const handleDownloadReport = () => {
@@ -81,46 +84,50 @@ function App() {
               >
                 <div className="container mx-auto px-8 py-8">
                   <Routes>
-                    <Route
-                      path="/"
-                      element={
-                        <>
-                          <div className="flex justify-between items-center mb-8">
-                            <div>
-                              <h1 className="text-3xl font-bold text-gray-800 dark:text-cyber-primary">
-                                Security Audit Dashboard
-                              </h1>
-                              <p className="text-gray-600 dark:text-gray-400 mt-2">
-                                CIS Benchmark Compliance Status
-                              </p>
+                    {userRole === 'admin' ? (
+                      <Route path="/" element={<AdminDashboard />} />
+                    ) : (
+                      <Route
+                        path="/"
+                        element={
+                          <>
+                            <div className="flex justify-between items-center mb-8">
+                              <div>
+                                <h1 className="text-3xl font-bold text-gray-800 dark:text-cyber-primary">
+                                  Security Audit Dashboard
+                                </h1>
+                                <p className="text-gray-600 dark:text-gray-400 mt-2">
+                                  CIS Benchmark Compliance Status
+                                </p>
+                              </div>
+                              <button
+                                onClick={handleDownloadReport}
+                                className="flex items-center px-4 py-2 bg-blue-500/20 text-blue-500 rounded-lg hover:bg-blue-500/30 hover:text-black dark:bg-cyber-primary/20 dark:text-cyber-primary dark:hover:bg-cyber-primary/30 dark:hover:text-white transition-colors border border-blue-500/50 dark:border-cyber-primary/50 hover:shadow-lg hover:shadow-blue-500/50 dark:hover:shadow-cyber-primary/80"
+                              >
+                                <Download className="w-5 h-5 mr-2" />
+                                Download Report
+                              </button>
                             </div>
-                            <button
-                              onClick={handleDownloadReport}
-                              className="flex items-center px-4 py-2 bg-blue-500/20 text-blue-500 rounded-lg hover:bg-blue-500/30 hover:text-black dark:bg-cyber-primary/20 dark:text-cyber-primary dark:hover:bg-cyber-primary/30 dark:hover:text-white transition-colors border border-blue-500/50 dark:border-cyber-primary/50 hover:shadow-lg hover:shadow-blue-500/50 dark:hover:shadow-cyber-primary/80"
-                            >
-                              <Download className="w-5 h-5 mr-2" />
-                              Download Report
-                            </button>
-                          </div>
 
-                          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                            {auditData.cards.map((card, index) => (
-                              <DashboardCard key={index} {...card} />
-                            ))}
-                          </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                              {auditData.cards.map((card, index) => (
+                                <DashboardCard key={index} {...card} />
+                              ))}
+                            </div>
 
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                            <SecurityTrends />
-                            <ComplianceScore />
-                          </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                              <SecurityTrends />
+                              <ComplianceScore />
+                            </div>
 
-                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                            <AuditProgress data={auditData.progress} />
-                            <RecentFindings findings={auditData.findings} />
-                          </div>
-                        </>
-                      }
-                    />
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                              <AuditProgress data={auditData.progress} />
+                              <RecentFindings findings={auditData.findings} />
+                            </div>
+                          </>
+                        }
+                      />
+                    )}
                     <Route path="/settings" element={<SettingsPage />} />
                     <Route path="/add-user" element={<AddUser />} />
                     <Route path="/user-control" element={<UserControl />} />
