@@ -1,17 +1,26 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Moon, Sun, Shield } from 'lucide-react';
 
-const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
+const SignupPage = () => {
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false); // State to show success message
+  const navigate = useNavigate(); // Hook to navigate to login page
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'user' && password === 'user') {
-      onLogin();
-    }
+
+    // Simulate a successful signup process
+    setIsSuccess(true);
+
+    // Show success message for 2 seconds, then redirect to login page
+    setTimeout(() => {
+      navigate('/'); // Navigate to login page
+    }, 2000); // Delay of 2 seconds before redirect
   };
 
   const toggleTheme = () => {
@@ -34,15 +43,21 @@ const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
         </button>
       </div>
 
-      <div className="w-full max-w-md p-8 bg-white/10 dark:bg-gray-900/50 rounded-lg shadow-xl backdrop-blur-md">
-        <div className="flex justify-center mb-8">
+      <div className="w-full max-w-md p-6 bg-white/10 dark:bg-gray-900/50 rounded-lg shadow-xl backdrop-blur-md">
+        <div className="flex justify-center mb-4"> {/* Reduced top margin */}
           <Shield className="w-16 h-16 text-blue-400" />
         </div>
 
-        <h2 className="text-3xl font-bold text-center mb-2 text-white">Login</h2>
-        <p className="text-center text-gray-300 mb-6">Cybersecurity Compliance Portal</p>
+        <h2 className="text-3xl font-bold text-center mb-2 text-white">Sign Up</h2>
+        <p className="text-center text-gray-300 mb-4">Cybersecurity Compliance Portal</p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {isSuccess && (
+          <div className="mb-4 p-3 bg-green-500/20 text-green-200 rounded backdrop-blur-sm text-center">
+            <p>Signup Successful! Redirecting to Login...</p>
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4"> {/* Reduced space between fields */}
           <div>
             <label className="block text-sm font-medium text-gray-200">Username</label>
             <input
@@ -53,6 +68,29 @@ const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
               required
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-200">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 bg-white/10 border border-gray-300/30 text-white rounded-md shadow-sm"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-200">Phone Number</label>
+            <input
+              type="tel"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="mt-1 block w-full px-3 py-2 bg-white/10 border border-gray-300/30 text-white rounded-md shadow-sm"
+              required
+            />
+          </div>
+
           <div>
             <label className="block text-sm font-medium text-gray-200">Password</label>
             <input
@@ -68,13 +106,14 @@ const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
             type="submit"
             className="w-full py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
           >
-            Sign In
+            Sign Up
           </button>
         </form>
+
         <p className="mt-4 text-center text-gray-300">
-          Don't have an account?{' '}
-          <Link to="/signup" className="text-blue-500 hover:underline">
-            Sign up
+          Already have an account?{' '}
+          <Link to="/" className="text-blue-500 hover:underline">
+            Login
           </Link>
         </p>
       </div>
@@ -82,4 +121,4 @@ const LoginPage = ({ onLogin }: { onLogin: () => void }) => {
   );
 };
 
-export default LoginPage;
+export default SignupPage;

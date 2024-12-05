@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Shield, AlertTriangle, CheckCircle, Download, Server, Lock } from 'lucide-react';
-import { ThemeProvider } from './context/ThemeContext';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import SignupPage from './components/SignupPage';
 import TopNavbar from './components/TopNavbar';
 import Sidebar from './components/Sidebar';
 import DashboardCard from './components/DashboardCard';
@@ -8,15 +9,18 @@ import AuditProgress from './components/AuditProgress';
 import RecentFindings from './components/RecentFindings';
 import SecurityTrends from './components/SecurityTrends';
 import ComplianceScore from './components/ComplianceScore';
-import LoginPage from './components/LoginPage'; // Import the LoginPage
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Import routing components
-import SettingsPage from './components/SettingsPage'; // Import the SettingsPage
+import AddUser from './components/pages/AddUser';
+import UserControl from './components/pages/UserControl';
+import NotifyUser from './components/pages/NotifyUser';
+import ActiveDevices from './components/pages/ActiveDevices';
+import SettingsPage from './components/SettingsPage';
+import { ThemeProvider } from './context/ThemeContext';
+import { Shield, AlertTriangle, CheckCircle, Download, Lock } from 'lucide-react';
 
 function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Track sidebar state
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login state
 
-  // Simulated audit data
   const [auditData] = useState({
     cards: [
       { title: 'Total Checks', value: 234, icon: Shield, trend: 5 },
@@ -55,31 +59,25 @@ function App() {
     ],
   });
 
-  // Function to handle login
   const handleLogin = () => {
     setIsLoggedIn(true);
   };
 
-  // Function to handle report download
   const handleDownloadReport = () => {
     console.log('Downloading report...');
   };
 
   return (
     <ThemeProvider>
-      {isLoggedIn ? (
-        <Router>
-          <div className="min-h-screen bg-gray-100 dark:bg-cyber-darker transition-colors duration-200">
+      <Router>
+        {isLoggedIn ? (
+          <div className="min-h-screen bg-gray-50 dark:bg-cyber-darker transition-colors duration-200">
             <TopNavbar />
             <div className="flex">
-              {/* Sidebar with fixed positioning */}
               <Sidebar isCollapsed={isSidebarCollapsed} setIsCollapsed={setIsSidebarCollapsed} />
-              {/* Main content area */}
               <div
-                className={`transition-all duration-300 flex-1 ${
-                  isSidebarCollapsed ? 'ml-16' : 'ml-64'
-                }`}
-                style={{ overflowY: 'auto', height: 'calc(100vh - 64px)' }} // Make the content scrollable
+                className={`transition-all duration-300 flex-1 ${isSidebarCollapsed ? 'ml-16' : 'ml-64'}`}
+                style={{ overflowY: 'auto', height: 'calc(100vh - 64px)' }}
               >
                 <div className="container mx-auto px-8 py-8">
                   <Routes>
@@ -123,16 +121,23 @@ function App() {
                         </>
                       }
                     />
-                    <Route path="/settings" element={<SettingsPage />} /> {/* Add settings page route */}
+                    <Route path="/settings" element={<SettingsPage />} />
+                    <Route path="/add-user" element={<AddUser />} />
+                    <Route path="/user-control" element={<UserControl />} />
+                    <Route path="/active-devices" element={<ActiveDevices />} />
+                    <Route path="/notify-user" element={<NotifyUser />} />
                   </Routes>
                 </div>
               </div>
             </div>
           </div>
-        </Router>
-      ) : (
-        <LoginPage onLogin={handleLogin} /> // Show login page if not logged in
-      )}
+        ) : (
+          <Routes>
+            <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
+            <Route path="/signup" element={<SignupPage />} />
+          </Routes>
+        )}
+      </Router>
     </ThemeProvider>
   );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 
 const SettingsPage = () => {
   return (
-    <div className="p-8">
+    <div className="p-8 bg-white dark:bg-cyber-dark text-gray-800 dark:text-gray-100">
       <h1 className="text-3xl font-bold text-gray-800 dark:text-cyber-primary">
         Settings
       </h1>
